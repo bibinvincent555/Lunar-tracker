@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Professional lunar phase tracker with real-time data and cosmic visualizations">
+  <meta name="keywords" content="moon phases, lunar tracker, astronomy, weather API">
+  <meta name="author" content="Lunar Tracker">
+  <meta name="theme-color" content="#0ea5e9">
+  
+  <title>Lunar Tracker - Professional Moon Phase Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* General Reset */
+    * {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #0a0f1f, #02040a);
+      color: #e5e7eb;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(14, 165, 233, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      margin-top: 0.5rem;
+    }
+
+    /* Search Section */
+    .search-section {
+      margin: 2rem auto;
+      width: 100%;
+      max-width: 700px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1rem;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+    }
+
+    .search-btn {
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      border: none;
+      color: #fff;
+      padding: 0 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .search-btn:hover {
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      box-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+    }
+
+    /* Results */
+    .moon-phases-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .phase-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.3s;
+      backdrop-filter: blur(8px);
+    }
+
+    .phase-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 0 20px rgba(56,189,248,0.2);
+    }
+
+    .phase-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .phase-title {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .phase-date {
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+
+    /* Buttons */
+    .show-more-container {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .show-more-btn {
+      background: none;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .show-more-btn:hover {
+      background: #38bdf8;
+      color: #02040a;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #9ca3af;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+    }
+
+    .footer-links a {
+      color: #38bdf8;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">🌙 Lunar Tracker</div>
+      <p class="tagline">Discover the cosmic rhythm of the moon</p>
+    </header>
+
+    <!-- Main -->
+    <main>
+      <section class="search-section">
+        <div class="search-box">
+          <input type="text" id="location" placeholder="Enter your location..." value="New York, NY">
+          <button onclick="fetchMoonPhases()" id="fetchBtn" class="search-btn">🔍 Search</button>
+        </div>
+      </section>
+
+      <!-- Moon Phases Display -->
+      <section id="moonPhases" class="moon-phases-section">
+        <!-- Example card -->
+        <div class="phase-card">
+          <div class="phase-icon">🌕</div>
+          <div class="phase-title">Full Moon</div>
+          <div class="phase-date">Aug 25, 2025</div>
+        </div>
+      </section>
+
+      <div id="showMoreContainer" class="show-more-container" style="display: none;">
+        <button onclick="showNext7Days()" id="showMoreBtn" class="show-more-btn">View 7-Day Forecast →</button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 Lunar Tracker. Powered by Visual Crossing Weather API</p>
+      <p class="footer-links">
+        <a href="#">Privacy Policy</a> • 
+        <a href="#">Terms of Service</a> • 
+        <a href="#">API Documentation</a>
+      </p>
+    </footer>
+  </div>
+  
+  <script src="api/moonphases.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
